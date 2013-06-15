@@ -86,7 +86,7 @@ describe 'MergePackingStrategy'.magenta, ->
           vans.push(new Van van) for van in someVans
           done()
 
-    it 'finds a van containing an item by item.id', ->
+    it 'finds the index of a van containing an item by item.id', ->
       vans[0].packItem items[0]
       vans[0].packItem items[1]
       vans[1].packItem items[2]

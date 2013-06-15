@@ -24,6 +24,7 @@ describe 'Van'.magenta, ->
 
     it 'should be valid with all the correct attributes', ->
       van.valid.should.be.ok
+
   describe 'createFail'.yellow, ->
     van = null
     before -> 
@@ -35,6 +36,7 @@ describe 'Van'.magenta, ->
 
     it 'should be invalid if not all of the required attributes exist', ->
       van.valid.should.not.be.ok
+
   describe 'all'.yellow, ->
     it 'should return all vans in the database', (done) ->
       Van.all (err, vans) ->
@@ -45,6 +47,7 @@ describe 'Van'.magenta, ->
         van.should.be.an.instanceOf(Van) for van in vans
         van.valid.should.be.ok for van in vans
         done()
+
   describe 'some'.yellow, ->
     it 'should return n number of vans', (done) ->
       Van.some 3, (err, vans) ->
@@ -55,6 +58,7 @@ describe 'Van'.magenta, ->
         van.should.be.an.instanceOf Van for van in vans
         van.valid.should.be.ok for van in vans
         done()
+
   describe 'largest'.yellow, ->
     it 'should return the largest van in the database', (done) ->
       Van.largest (err, van) ->
@@ -62,6 +66,7 @@ describe 'Van'.magenta, ->
         parseInt(van.maximum_weight).should.be.equal 720
         parseInt(van.maximum_cube).should.be.equal 400
         done()
+
   describe 'smallest'.yellow, ->
     it 'should return the smallest van in the database', (done) ->
       Van.smallest (err, van) ->
@@ -69,6 +74,7 @@ describe 'Van'.magenta, ->
         parseInt(van.maximum_weight).should.be.equal 370
         parseInt(van.maximum_cube).should.be.equal 191
         done()
+
   describe 'medium'.yellow, ->
     it 'should return the medium van in the database', (done) ->
       Van.medium (err, van) ->
@@ -138,9 +144,6 @@ describe 'Van'.magenta, ->
       # it should fit 3 more tinys, and then be full
       bv.packItem(tiny).should.be.ok for i in [0..2] 
       bv.packItem(tiny).should.not.be.ok
-  
-  describe 'unpackItem'.yellow, ->
-    it 'should find an item packed in a van and remove it'
 
   describe 'unpackItem'.yellow, ->
     item = null
@@ -230,6 +233,7 @@ describe 'Van'.magenta, ->
       bv.fitsItem(large).should.be.ok
       bv.fitsItem(huge).should.be.ok
       bv.fitsItem(toobig).should.not.be.ok
+      
   describe 'bestVanForItem'.yellow, ->
     tiny = small = mid = large = huge = toobig = null
     before ->
