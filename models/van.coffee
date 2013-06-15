@@ -6,7 +6,6 @@ ObjectId = db.ObjectId
 
 Item = require './item'
 
-# This is basically a Knapsack
 class Van
 
   constructor: (attributes) ->
