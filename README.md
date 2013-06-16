@@ -15,6 +15,21 @@ The solutions should be optimised for the least cost way of despatching all of t
 
 Hackers will be judged based on the accuracy of the solutions and the speed of the algorithm. Extra credit will given for building the solution as a web service and for any automated testing that is included in the solution.
 
+## Testing
+Ensure all dependencies are installed. Node, NPM, make, MongoDB, etc.
+
+At the minute, the different Vans are stored in MongoDB, and the server will use the database in it's calculations.
+
+First, start the server with:
+
+    ~$ npm start
+
+To test with the sample Item sets, run:
+
+    ~$ make api-test
+
+Which will print the output of the algorithm using the items stored in lib/packages.json.
+
 ## Notes
 
 TODO:
