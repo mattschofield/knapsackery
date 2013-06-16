@@ -41,7 +41,7 @@ describe 'MergePackingStrategy'.magenta, ->
 
     before (done) ->
       s = new MergePackingStrategy
-        debug: false
+        debug: 0
       Item.some someN, (err, someItems) ->
         return done(err) if err
         items.push(new Item item) for item in someItems
@@ -98,7 +98,7 @@ describe 'MergePackingStrategy'.magenta, ->
       s.findVanByItemId(vans, items[3].id).should.be.equal 1
       s.findVanByItemId(vans, items[4].id).should.be.equal -1 # not found
 
-  describe 'sortItems'.yellow, ->
+  describe 'sortItemsWeighted'.yellow, ->
 
     s = null
     items = []
@@ -111,10 +111,33 @@ describe 'MergePackingStrategy'.magenta, ->
 
     it 'should sort all the items in descending order', ->
       items.should.have.length 150
-      items.sort s.sortItems
+      items.sort s.sortItemsWeighted
       items[0].should.be.an.instanceOf Item
       items[0].should.have.property "weight"
       # items[0].weight.should.be.equal 40
 
+  describe 'addOptimalVan'.yellow, ->
+    s = null
+    items = []
+    packedVans = []
+    optVans = []
+    before (done) ->
+      s = new MergePackingStrategy
+      Item.all (err, all) ->
+        return done(err) if err
+        items.push(new Item item) for item in all
+        s.packEachItem items, (err, unpackableItems, packed) ->
+          return done(err) if err
+          packedVans = packed
+          done()
+
+    it 'should move an item from one array to another', ->
+      optVans.should.be.an.instanceOf(Array).with.lengthOf 0
+      packedVans.should.be.an.instanceOf(Array).with.lengthOf items.length
+      thisItem = packedVans[0]
+      s.addOptimalVan optVans, packedVans
+      optVans.should.have.length 1
+      packedVans.should.have.length items.length-1
+      optVans[0][k].should.be.equal v for k,v of thisItem
 
 

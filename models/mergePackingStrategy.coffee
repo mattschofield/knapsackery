@@ -5,12 +5,12 @@ _ = require 'underscore'
 # superclass
 PackingStrategy = require './packingStrategy'
 Van = require './van'
+Item = require './item'
 
 class MergePackingStrategy extends PackingStrategy
 
   constructor: (attributes) ->
-    @[k]=v for k,v of attributes
-    @ 
+    super attributes
 
   pack: (items, callback) ->
     self = @
@@ -31,7 +31,9 @@ class MergePackingStrategy extends PackingStrategy
     ###
 
     @packEachItem items, (err, unpackableItems, packedVans) ->
-      items.sort self.sortItems
+      console.log "" if self.debug
+      items.sort self.sortItemsWeighted
+
       # we can ignore the unpackable items, we don't have vans big enough
       sortedPackables = _.difference items, unpackableItems
 
@@ -40,29 +42,32 @@ class MergePackingStrategy extends PackingStrategy
       while sortedVans.length > 0
         if sortedVans.length is 1 and sortedVans[0].items.length
           console.log "OPTIMAL2: 1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
-          optimalVans.push sortedVans.shift()
+          self.addOptimalVan optimalVans, sortedVans
           break
         
         # remove any items from items that are packed in sortedVans[0]
+        console.log "#{items.length} : (#{item.id for item in items})" if self.debug
+        console.log "REMOVING (#{item.id for item in sortedVans[0].items})".red if self.debug
         items = _.reject items, (item) -> (_.contains sortedVans[0].items, item)
+        console.log "ITEMS NOW #{items.length}".green if self.debug
 
         if not sortedVans[0].fitsItem items[0] # the smallest item
           # then this van is optimally packed
           for item in sortedVans[0].items
             items = self.removeItemByItem items, item
 
-          console.log "OPTIMAL1:  1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
-          console.log "NEXT VAN:  1(#{sortedVans[1].remainingWeight},#{sortedVans[1].remainingCube})".cyan if self.debug
-          console.log "NEXT ITEM: 1(#{items[0].weight},#{items[0].cube})".red if self.debug
+          if self.debug
+            console.log "OPTIMAL1:  1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})(#{item.id for item in sortedVans[0].items})".green 
+            console.log "NEXT VAN:  1(#{sortedVans[1].remainingWeight},#{sortedVans[1].remainingCube})(#{item.id for item in sortedVans[1].items})".cyan
+            console.log "NEXT ITEM: 1(#{items[0].weight},#{items[0].cube})".red
 
-          optimalVans.push sortedVans.shift()
+          self.addOptimalVan optimalVans, sortedVans
         else
-
           # find the maximally small item that will fit
           lastFoundIndex = 0
           found = false
 
-          console.log "\n----------------" if self.debug
+          console.log "----------------" if self.debug
           console.log "Remaining W,C:(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube}). I:#{items[lastFoundIndex].id}(#{items[lastFoundIndex].weight},#{items[lastFoundIndex].cube}) in V:1 will fit. " if self.debug
           while not found and lastFoundIndex < items.length
             m = ""
@@ -127,47 +132,26 @@ class MergePackingStrategy extends PackingStrategy
         console.log err if err
 
   removeSortedItem: (items, index) ->
-    for i in [index...items.length]
-      items[i] = items[i+1]
-    items.pop() # remove undef off the end
-    return items
+    super items, index
 
   removeItemByItem: (itemList, item) ->
-    removed = _.reject itemList, (i) -> i.id is item.id
-    return removed
+    super itemList, item
 
   # returns the index of the van in vans
   findVanByItemId: (vans, id) ->
-    found = _.find vans, (van) -> 
-      _.find van.items, (item) ->
-        item.id is id
-
-    return -1 if not found?
-    foundIndex = _.indexOf vans, found
-    return foundIndex
+    super vans, id
 
   sortVans: (v1, v2) ->
-    if parseFloat(v1.remainingWeight) is parseFloat(v2.remainingWeight)
-      return 0
-    else
-      if parseFloat(v1.remainingWeight) > parseFloat(v2.remainingWeight)
-        return 1
-      else
-        return -1
+    super v1, v2
 
-  sortItems: (i1, i2) ->
-    if (0.33 * parseFloat(i1.weight)) + (0.67 * parseFloat(i1.cube)) is (0.33 * parseFloat(i2.weight)) + (0.67 * parseFloat(i2.cube))
-    # if parseFloat(i1.weight) + parseFloat(i1.cube) is parseFloat(i2.weight) + parseFloat(i2.cube)
-      return 0
-    else
-      if (0.33 * parseFloat(i1.weight)) + (0.67 * parseFloat(i1.cube)) > (0.33 * parseFloat(i2.weight)) + (0.67 * parseFloat(i2.cube))
-      # if parseFloat(i1.weight) + parseFloat(i1.cube) > parseFloat(i2.weight) + parseFloat(i2.cube)
-        return 1
-      else
-        return -1
+  sortItemsWeighted: (i1, i2) ->
+    super i1, i2
 
   pruneEmptyVans: (vans) ->
-    pruned = _.reject vans, (van) -> van.items.length is 0
-    return pruned
+    super vans
+
+  addOptimalVan: (optimalVans, nonOptimalVans) ->
+    if nonOptimalVans[0]?
+      optimalVans.push nonOptimalVans.shift()
 
 module.exports = MergePackingStrategy
