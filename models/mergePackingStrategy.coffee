@@ -39,7 +39,7 @@ class MergePackingStrategy extends PackingStrategy
 
       while sortedVans.length > 0
         if sortedVans.length is 1 and sortedVans[0].items.length
-          console.log "OPTIMAL: 1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
+          console.log "OPTIMAL2: 1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
           optimalVans.push sortedVans.shift()
           break
         
@@ -51,7 +51,10 @@ class MergePackingStrategy extends PackingStrategy
           for item in sortedVans[0].items
             items = self.removeItemByItem items, item
 
-          console.log "OPTIMAL: 1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
+          console.log "OPTIMAL1:  1(#{sortedVans[0].remainingWeight},#{sortedVans[0].remainingCube})".green if self.debug
+          console.log "NEXT VAN:  1(#{sortedVans[1].remainingWeight},#{sortedVans[1].remainingCube})".cyan if self.debug
+          console.log "NEXT ITEM: 1(#{items[0].weight},#{items[0].cube})".red if self.debug
+
           optimalVans.push sortedVans.shift()
         else
 
@@ -153,10 +156,12 @@ class MergePackingStrategy extends PackingStrategy
         return -1
 
   sortItems: (i1, i2) ->
-    if parseFloat(i1.weight) + parseFloat(i1.cube) is parseFloat(i2.weight) + parseFloat(i2.cube)
+    if (0.33 * parseFloat(i1.weight)) + (0.67 * parseFloat(i1.cube)) is (0.33 * parseFloat(i2.weight)) + (0.67 * parseFloat(i2.cube))
+    # if parseFloat(i1.weight) + parseFloat(i1.cube) is parseFloat(i2.weight) + parseFloat(i2.cube)
       return 0
     else
-      if parseFloat(i1.weight) + parseFloat(i1.cube) > parseFloat(i2.weight) + parseFloat(i2.cube)
+      if (0.33 * parseFloat(i1.weight)) + (0.67 * parseFloat(i1.cube)) > (0.33 * parseFloat(i2.weight)) + (0.67 * parseFloat(i2.cube))
+      # if parseFloat(i1.weight) + parseFloat(i1.cube) > parseFloat(i2.weight) + parseFloat(i2.cube)
         return 1
       else
         return -1
