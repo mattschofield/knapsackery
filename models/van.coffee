@@ -64,7 +64,7 @@ class Van
   @bestVanForItem: (item, callback) ->
     # We want to find the van that would fit an item with as little wasted weight/volume as possible.
     # Find an item with measurements $gte the item's measurements, and sort by cost
-    db.vans.find({ $and: [ { maximum_weight: { $gte: parseInt(item.weight) }}, { maximum_cube: { $gte: parseInt(item.cube) }} ] }).sort { cost: 1 }, (err, vans) ->
+    db.vans.find({ $and: [ { maximum_weight: { $gte: parseFloat(item.weight) }}, { maximum_cube: { $gte: parseFloat(item.cube) }} ] }).sort { cost: 1 }, (err, vans) ->
       return callback new Error err if err
       if vans.length > 0
         return callback null, new Van vans[0]
