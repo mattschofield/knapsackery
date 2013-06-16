@@ -20,15 +20,23 @@ Ensure all dependencies are installed. Node, NPM, make, MongoDB, etc.
 
 At the minute, the different Vans are stored in MongoDB, and the server will use the database in it's calculations.
 
-First, start the server with:
+First, start the database with:
+
+    ~$ (sudo) mongod
+
+and the node server with:
 
     ~$ npm start
+
+Make sure everything's ok with:
+
+    ~$ make test
 
 To test with the sample Item sets, run:
 
     ~$ make api-test
 
-Which will print the output of the algorithm using the items stored in lib/packages.json.
+Which will print the output of the packing algorithm using the items stored in lib/packages.json.
 
 ## Notes
 
