@@ -50,5 +50,6 @@ if there's time:
 
 Possible extensions of models/PackingStrategy.coffee:
 1: 
+
     1) Keep instantiating large vans and adding item at a time
     2) When all items are added to a van, try and minimise the van.
