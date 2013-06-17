@@ -42,14 +42,13 @@ Which will print the output of the packing algorithm using the items stored in l
 
 TODO:
 
-Automatically calculate weightings to item ordering.
+Automatically calculate weightings used in item ordering.
 - need to know the average ratio of weight:cube and balance it out to order the items
-- e.g. if weight = 2*cube, apply 0.33 to weight and 0.67 to cube. Should work (ish).
-
-Build into a web-service and test
+- e.g. if weight = 2*cube, apply 0.33 to weight and 0.67 to cube.
 
 if there's time: 
 
-Try different packing approach:
-1. Keep instantiating large vans and adding item at a time
-2. When all items are added to a van, try and minimise the van.
+Possible extensions of models/PackingStrategy.coffee:
+1: 
+    1) Keep instantiating large vans and adding item at a time
+    2) When all items are added to a van, try and minimise the van.
